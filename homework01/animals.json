@@ -1,0 +1,144 @@
+{
+  "animals": [
+    {
+      "head": "bull",
+      "body": "crow-heron",
+      "arms": 6,
+      "legs": 9,
+      "tail": 15
+    },
+    {
+      "head": "lion",
+      "body": "earwig-foal",
+      "arms": 7,
+      "legs": 5,
+      "tail": 12
+    },
+    {
+      "head": "bunny",
+      "body": "ape-locust",
+      "arms": 4,
+      "legs": 6,
+      "tail": 10
+    },
+    {
+      "head": "bull",
+      "body": "louse-ocelot",
+      "arms": 4,
+      "legs": 10,
+      "tail": 14
+    },
+    {
+      "head": "snake",
+      "body": "roughy-gecko",
+      "arms": 8,
+      "legs": 11,
+      "tail": 19
+    },
+    {
+      "head": "raven",
+      "body": "sloth-caiman",
+      "arms": 6,
+      "legs": 12,
+      "tail": 18
+    },
+    {
+      "head": "snake",
+      "body": "boar-monkey",
+      "arms": 9,
+      "legs": 5,
+      "tail": 14
+    },
+    {
+      "head": "bunny",
+      "body": "ocelot-kid",
+      "arms": 10,
+      "legs": 12,
+      "tail": 22
+    },
+    {
+      "head": "snake",
+      "body": "moray-dove",
+      "arms": 5,
+      "legs": 4,
+      "tail": 9
+    },
+    {
+      "head": "snake",
+      "body": "toad-wolf",
+      "arms": 3,
+      "legs": 12,
+      "tail": 15
+    },
+    {
+      "head": "bunny",
+      "body": "sloth-bengal",
+      "arms": 9,
+      "legs": 4,
+      "tail": 13
+    },
+    {
+      "head": "bull",
+      "body": "muskox-ocelot",
+      "arms": 6,
+      "legs": 5,
+      "tail": 11
+    },
+    {
+      "head": "lion",
+      "body": "bee-dove",
+      "arms": 9,
+      "legs": 5,
+      "tail": 14
+    },
+    {
+      "head": "bull",
+      "body": "slug-duck",
+      "arms": 5,
+      "legs": 12,
+      "tail": 17
+    },
+    {
+      "head": "bunny",
+      "body": "pony-raven",
+      "arms": 7,
+      "legs": 10,
+      "tail": 17
+    },
+    {
+      "head": "raven",
+      "body": "cougar-skunk",
+      "arms": 5,
+      "legs": 5,
+      "tail": 10
+    },
+    {
+      "head": "snake",
+      "body": "leech-asp",
+      "arms": 2,
+      "legs": 4,
+      "tail": 6
+    },
+    {
+      "head": "lion",
+      "body": "mantis-piglet",
+      "arms": 7,
+      "legs": 6,
+      "tail": 13
+    },
+    {
+      "head": "lion",
+      "body": "squid-man",
+      "arms": 9,
+      "legs": 7,
+      "tail": 16
+    },
+    {
+      "head": "snake",
+      "body": "mole-baboon",
+      "arms": 10,
+      "legs": 5,
+      "tail": 15
+    }
+  ]
+}
