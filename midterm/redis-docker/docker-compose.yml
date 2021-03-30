@@ -1,0 +1,18 @@
+version: '3'
+services:
+ web:
+  build: .
+  container_name: rry229_web
+  ports:
+   - 5040:5000
+  volumes:
+   - ./data/data_file.json:/datafile.json
+ redis:
+  image: redis:latest
+  container_name: rry229-redis
+  ports:
+   - 6420:6379
+  volumes:
+   - ./config/redis.conf:/redis.conf
+   - ./mydata/:/data
+  command: [ "redis-server", "/redis.conf" ]
