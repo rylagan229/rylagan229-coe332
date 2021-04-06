@@ -1,14 +1,20 @@
 import json
 import redis
 import datetime
-from flask import Flask, request
+from flask import Flask, request, jsonify
+import datetime
+import petname
+import uuid
+import random
 
 app = Flask(__name__)
-rd = redis.StrictRedis(host='127.0.0.1', port=6420,db=0)
+rd = redis.StrictRedis(host='redis-docker_redis_1', port=6379,db=0)
 
 @app.route('/animals', methods=['GET'])
 def get_animals():
-    return json.loads(rd.get('animals'))
+    data = get_data()
+    jsonList = data['animals']
+    return jsonify(jsonList)
 
 @app.route('/animals/daterange', methods=['GET'])
 def querydate():
@@ -34,13 +40,13 @@ def uuid_select(uuid):
 @app.route('/animals/edit', methods=['GET'])
 def edit_animal():
     test = get_data()
+    rd = redis.StrictRedis(host='redis-docker_redis_1', port=6379, db=0)
     uuid = request.args.get('uuid')
     head = request.args.get('head')
     arms = request.args.get('arms')
     body = request.args.get('body')
     tail = request.args.get('tail')
     legs = request.args.get('legs')
-    
 
     i = [i for (i,x) in enumerate(test['animals']) if x['uuid'] == uuid]
 
@@ -80,15 +86,14 @@ def delete():
 def leg_average():
     test = get_data()
     jsonList = test['animals']
-    total_new = 0
+    total = 0.0
     count = 0
 
     for i in jsonList:
-        total_old = jsonList[count]['legs']
-        total_new = total_new + total_old 
+        total = float(i['legs']) + total
         count = count + 1
     
-    average = (total_new/count)
+    average = float(total/count)
 
     return str(average)
 
@@ -103,9 +108,39 @@ def count():
 
     return str(count)
 
-def get_data():
+@app.route('/loaddata', methods=['GET'])
+def load():
+    animal_dict = {}
+    animal_dict['animals'] = []
+    head = ['snake', 'bull', 'lion', 'raven', 'bunny']
 
-    return json.loads(rd.get('animals'))
+    for i in range(20):
+        arms = random.randrange(2,11,2)
+        legs = random.randrange(3,13,3)
+        tail = arms + legs
+        body1 = petname.name()
+        body2 = petname.name()
+    
+        while (body1 == body2):
+            body2 = petname.name()
+
+        body = body1 + "-" + body2
+
+        created_on = str(datetime.datetime.now())
+        uid = str(uuid.uuid4())
+
+        animal_dict['animals'].append({'head': head[random.randrange(0,5,1)], 'body': body, 'arms': arms, 'legs': legs, 'tail' : tail, 'created_on': created_on,'uuid': uid})
+
+    rd = redis.StrictRedis(host='redis-docker_redis_1', port=6379, db=0)
+    rd.set('animals', json.dumps(animal_dict, indent=2))
+
+    return jsonify(animal_dict)
+
+
+def get_data():
+    rd = redis.StrictRedis(host='redis-docker_redis_1', port = 6379, db = 0)
+    data = json.loads(rd.get('animals'))
+    return data
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
