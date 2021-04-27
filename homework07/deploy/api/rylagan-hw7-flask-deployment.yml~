@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rylagan-test-flask-deployment
+  labels:
+    app: rylagan-test-flask
+    username: rylagan
+    env: test
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rylagan-test-flask
+  template:
+    metadata:
+      labels:
+        app: rylagan-test-flask
+        username: rylagan
+        env: test
+    spec:
+      containers:
+        - name: rylagan-test-flask-pod
+          imagePullPolicy: Always
+          image: rylagan229/coe332-api:1.0 
+          command: ["python3"]
+          args: ["api.py"]
+          ports:
+            - name: flask
+              containerPort: 5000
+          env:
+            - name: RD_HOST
+              value: "10.109.76.73"
+            - name: WORKER_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
