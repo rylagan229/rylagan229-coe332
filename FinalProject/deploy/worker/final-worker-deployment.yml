@@ -17,19 +17,15 @@ spec:
       labels:
         app: rylagan-final-worker
         username: rylagan
-        env: test
     spec:
       containers:
         - name: rylagan-final-worker
           image: rylagan091888/final:latest
           command: ["python", "worker.py"]
-          ports:
-            - name: flask
-              containerPort: 5000
           env:
-            - name: RD_HOST
-              value: "10.109.76.73"
             - name: WORKER_IP
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            - name: REDIS_IP
+              value: 10.105.227.117

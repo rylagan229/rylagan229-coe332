@@ -23,9 +23,10 @@ spec:
           image: rylagan091888/final:latest
           imagePullPolicy: Always
           command: ["python", "api.py"]
+
           env:
-            - name: REDIS_IP
-              value: 10.106.251.26
+            - name: FLASK_APP
+              value: "api.py"
           ports:
-            - name: flask
+            - name: http
               containerPort: 5000
