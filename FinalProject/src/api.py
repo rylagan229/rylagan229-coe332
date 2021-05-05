@@ -9,7 +9,8 @@ import datetime
 
 app = Flask(__name__)
 
-rd = redis.StrictRedis(host='10.105.227.117', port=6379, db = 0)
+redis_ip = '10.105.227.117'
+rd = redis.StrictRedis(host = redis_ip, port=6379, db = 0)
 
 @app.route('/helloworld', methods=['GET'])
 def helloworld():
@@ -20,15 +21,16 @@ def helloworld():
 def instructions():
     return """
     Try these routes:
-    /loaddata
-    /sortbystate/<stateID>
-    /getcity
-    /jobs
+    /loaddata                    #
+    /sortbystate/<stateID>       #
+    /getcity/<City_Name>         #
+    /delete                      #
+    /jobs                        #
 """
 #Route to load the data into the redis database. Can be used to reset data as well
 @app.route('/load', methods['GET'])
 def loaddata():
-    with open("US_City_Pop_Above_50000.json","r") as f:
+    with open("USCityPop.json","r") as f:
         citydata = json.load(f)
     count = 0
     for city in citydata:
@@ -45,8 +47,18 @@ def loaddata():
         
     return json.loads(rd.get('city'))
 
-@app.route('/sortbystate/<stateID>', methods=['GET'])
-def sortbystate(stateID):
+@app.route('/sortbystate/<State>', methods=['GET'])
+def sortbystate(State):
+    test = get_data()
+
+    jsonList = test['city']
+
+    output = [x for x in jsonList if x['State'] == State]
+
+    return json.dumps(output)
+
+@app.route('/getcity/<City_Name>', methods=['GET'])
+def getcity(City_Name):
 
     return
 
@@ -57,6 +69,12 @@ def jobs_api():
     except Exception as e:
         return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
     return json.dumps(jobs.add_job(job['start'], job['end']))
+
+def get_data():
+    rd = redis.StrictRedis(host=redis_ip, port=6379, db = 0)
+    data = json.loads(rd.get('city'))
+    
+    return data
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

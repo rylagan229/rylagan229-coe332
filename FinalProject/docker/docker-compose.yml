@@ -1,15 +1,27 @@
-version: '3'
-services:
- web:
-  build: .
-  container_name: final-test
-  ports:
-   - 5040:5000
+version: "3.5"
 
- redis:
-  image: redis:latest
-  ports:
-   - 6420:6379
-  volumes:
-   - ./config/redis.conf:/redis.conf
-  command: ["redis-server", "/redis.conf" ]
+networks:
+    final_project:
+        driver: bridge
+
+services:
+    redis:
+        image: redis
+        networks:
+            - final
+    flask:
+        image: rylagan091888/final:latest
+        command: "api.py"
+        ports:
+            - "5000:5000"
+        environment:
+            REDIS_IP: "redis"
+        networks:
+            - final
+    worker:
+        image: rylagan091888/final:latest
+        command: "worker.py"
+        environment:
+            REDIS_IP: "redis"
+        networks:
+            - final
