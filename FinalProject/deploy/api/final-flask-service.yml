@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rylagan-final-flask-service
+  labels:
+    username: rylagan
+    env: test
+spec:
+  type: ClusterIP
+  selector:
+    username: rylagan
+    app: rylagan-final-flask
+  ports:
+  - name: rylagan-flask
+    port: 5000
+    targetPort: 5000

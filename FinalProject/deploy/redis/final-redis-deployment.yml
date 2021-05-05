@@ -1,0 +1,34 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rylagan-final-redis-deployment
+  labels:
+    app: rylagan-final-redis
+    username: rylagan
+    env: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rylagan-final-redis
+  template:
+    metadata:
+      labels:
+        app: rylagan-final-redis
+        username: rylagan
+        env: test
+    spec:
+      containers:
+        - name: rylagan-final-redis
+          image: redis:5.0.0
+          volumeMounts:
+          - name: rylagan-final-data
+            mountPath: "/data"
+          ports:
+            - name: redis
+              containerPort: 6379
+      volumes:
+      - name: rylagan-final-data
+        persistentVolumeClaim:
+          claimName: rylagan-final-data
