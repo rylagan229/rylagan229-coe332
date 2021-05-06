@@ -10,9 +10,9 @@ import datetime
 
 # Need CRUD routes:
 # Create == /Add_Animal
-# Read == /Get_Animal/<animal_id>
+# Read == /Get_Animal
 # Update == /Update_Animal/<animal_id>
-# Delete == /deleterange
+# Delete == /delete
 
 app = Flask(__name__)
 
@@ -24,79 +24,102 @@ def instructions():
     return """
     Try these routes:
     /load                        # Populates the redis database with the .json file provided. Can also be used to reset the database
-    /Get_Animal                  # Allows the user query an animal id to get the information of the animal
-    /Animal_Type/<type>          # Allows the user to sort by the type of Animal 
-    /Update_Animal/<animal_id>   # Allows the user to update an animal given the animal's given id
+    /Get_All                     # Returns every intake in the database. There are 3000 entries in the dataset by default
+    /Get_Animal/?Animal_ID=...   # Allows the user query an animal id to get the information of the animal
+    /Animal_Type/<type>          # Allows the user to sort by the type of Animal. Avaliable types are Dog, Cat, and Other 
+    /Update_Animal/?Animal_ID=...# Allows the user to update an animal given the animal's given id
     /Add_Animal                  # Allows the to add an animal
-    /deleterange                 # Allows the user to delete animals in a given input date range
+    /Delete/?Animal_ID=...       # Allows the user to delete an animal with a query for their id
     /jobs                        # Gets a list of Jobs
+
 """
 
 #Route to load the data into the redis database. Can be used to reset data as well
 @app.route('/load', methods=['GET'])
 def loaddata():
-    with open("Latest_Animal_Intakes.json","r") as f:
-        intakes = json.load(f)
+    with open("data.json","r") as f:
+        intakes_dict = json.load(f)
     
-    rd.set('intakes_key', json.dumps(intakes, indent=2))
+    rd.set('intakes_key', json.dumps(intakes_dict, indent=2))
         
-    return 'Database loaded\n'
+    return 'Database loaded!\n'
+
+@app.route('/Get_All', methods=['GET'])
+def GetAll():
+    return json.dumps(get_data(), indent=2)
 
 # Route to fulfill the C of CRUD
 @app.route('/Add_Animal', methods = ['GET','POST'])
 def Add():
-    # Can take either a GET or a POST; will give instructions if GET
-    return
+    try:
+        add = request.get_json(force=True)
+    except Exception as e:
+        return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
+    
+    test = get_data()
+    test['intakes'].append(add)
+    rd.set('intakes', json.dumps(test))
+
+    return json.dumps(test, indent=2)
 
 # Route to fulfill the R of CRUD
 @app.route('/Get_Animal/', methods=['GET'])
 def Get_Animal():
     test = get_data()
     output= {}
-    animal_id = request.args.get('id')
+    animal_id = request.args.get('Animal_ID')
     for x in test['intakes']:
-        if x['id'] == animal_id:
+        if x['Animal ID'] == animal_id:
             output = x
-    return json.dumps(output)
+
+    return json.dumps(output, indent = 2)
 
 # Route to fulfill the U of CRUD
-@app.route('/Update_Animal/<animal_id>', methods=['GET'])
+@app.route('/Update_Animal/', methods=['GET'])
 def Update():
-    return
+    test = get_data()
+    animal_id = request.args.get('Animal_ID')
+    name = request.args.get('name')
+    intaketype = request.args.get('intaketype')
+    intakecondition = request.args.get('intakecondition')
+    animaltype = request.args.get('Animal_Type')
+    breed = request.args.get('breed')
+    color = request.args.get('color')
+
+    intake = {}
+    for x in test['intakes']:
+        if x['Animal ID'] == animal_id:
+            x['Name'] = name
+            x['Intake Type'] = intaketype
+            x['Intake Condition'] = intakecondition
+            x['Animal_Type'] = animaltype
+            x['Breed'] = breed
+            x['Color'] = color
+        
+    rd.set('intakes_key', json.dumps(test))
+    return json.dumps(intake, indent=2)
 
 # Route to fulfill the D of CRUD
-@app.route('/deleterange', methods=['GET'])
+@app.route('/Delete/', methods=['GET'])
 def delete():
-    start = request.args.get('start')
-    startdate = datetime.datetime.strptime(start, "'%Y-%m-%d_%H:%M:%S.%f'")
-    end = request.args.get('end')
-    enddate = datetime.datetime.strptime(end,"'%Y-%m-%d_%H:%M:%S.%f'")
     test = get_data()
+    animal_id = request.args.get('Animal_ID')
+    for x in test['intakes']:
+        if x['Animal ID'] == animal_id:
+            test['intakes'].remove(x)
     
-    new_intakes = {}
-    new_intakes['intakes'] = []
-    
-    count = 0
-    for i in test['intakes']:
-        
-        if (datetime.datetime.strptime(test['intakes'][count]['DateTime'], '%Y-%m-%d %H:%M:%S.%f') <= startdate or datetime.datetime.strptime(test['intakes'][count]['DateTime'], '%Y-%m-%d %H:%M:%S.%f')>= enddate):
-            new_intakes['intakes'].append(test['intakes'][count])
-    
-        count = count + 1
-   
-    rd.set('animals', json.dumps(new_animals, indent=2))
+    rd.set('intakes_key', json.dumps(test))
 
-    return json.loads(rd.get('animals')) 
+    return 'Animal with ID {} deleted.'.format(animal_id)
 
 @app.route('/Animal_Type/<Animal_Type>', methods=['GET'])
 def SortByType(Animal_Type):
     test = get_data()
-
     jsonList = test['intakes']
 
     output = [x for x in jsonList if x['Animal Type'] == Animal_Type]
 
-    return json.dumps(output)
+    return json.dumps(output, indent=2)
 
 @app.route('/jobs', methods=['POST'])
 def jobs_api():
@@ -107,7 +130,6 @@ def jobs_api():
     return json.dumps(jobs.add_job(job['start'], job['end']))
 
 def get_data():
-    
     return json.loads(rd.get('intakes_key').decode('utf-8'))
 
 if __name__ == '__main__':

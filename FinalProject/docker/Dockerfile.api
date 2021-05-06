@@ -11,7 +11,7 @@ RUN pip3 install Flask==1.1.2 \
 
 COPY ./src/api.py /app/
 COPY ./src/jobs.py /app/
-COPY ./src/Latest_Animal_Intakes.json /app/
+COPY ./src/data.json /app/
 
 WORKDIR /app
 

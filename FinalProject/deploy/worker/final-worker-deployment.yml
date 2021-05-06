@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: rylagan-final-worker
-          image: rylagan091888/final:latest
+          image: rylagan091888/final-wrk:latest
           command: ["python", "worker.py"]
           env:
             - name: WORKER_IP

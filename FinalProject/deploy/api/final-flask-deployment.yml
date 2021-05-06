@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: rylagan-final-flask
-          image: rylagan091888/final:latest
+          image: rylagan091888/final-api:latest
           imagePullPolicy: Always
           command: ["python", "api.py"]
 

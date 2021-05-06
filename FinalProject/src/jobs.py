@@ -6,7 +6,7 @@ from redis import StrictRedis
 import os
 import sys
 
-redis_ip = '10.105.227.117'
+redis_ip = 'redis-db'
 q = HotQueue("queue", host=redis_ip, port=6379, db=1)
 rd_job = StrictRedis(host=redis_ip, port=6379, db=0)
 rd_data = StrictRedis(host=redis_ip, port=6379,db=2)

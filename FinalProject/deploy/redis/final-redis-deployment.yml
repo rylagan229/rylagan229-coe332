@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: rylagan-final-redis
-          image: redis:5.0.0
+          image: rylagan091888/final-db:latest
           volumeMounts:
           - name: rylagan-final-data
             mountPath: "/data"
