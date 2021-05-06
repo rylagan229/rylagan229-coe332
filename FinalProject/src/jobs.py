@@ -1,13 +1,15 @@
 #jobs.py
 import uuid
+import json
 from hotqueue import HotQueue
 from redis import StrictRedis
 import os
 import sys
 
-q = HotQueue("queue", host='10.105.227.117', port=6379, db=1)
-rd = StrictRedis(host='10.105.227.117', port=6379, db=0)
-
+redis_ip = '10.105.227.117'
+q = HotQueue("queue", host=redis_ip, port=6379, db=1)
+rd_job = StrictRedis(host=redis_ip, port=6379, db=0)
+rd_data = StrictRedis(host=redis_ip, port=6379,db=2)
 
 def _generate_jid():
     return str(uuid.uuid4())

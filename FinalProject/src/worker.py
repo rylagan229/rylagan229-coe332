@@ -1,5 +1,10 @@
 from jobs import q, update_job_status
+import matplotlib.pyplot as plt
 import time
+import redis
+
+redis_ip = '10.105.227.117'
+rd_job = redis.StrictRedis(host=redis_ip, port=6379, db=0)
 
 @q.worker
 def execute_job(jid):
