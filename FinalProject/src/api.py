@@ -9,7 +9,7 @@ import datetime
 
 app = Flask(__name__)
 
-redis_ip = '10.105.227.117'
+redis_ip = 'FinalProject_redis_1'
 rd = redis.StrictRedis(host = redis_ip, port=6379, db = 0)
 
 @app.route('/helloworld', methods=['GET'])
@@ -27,6 +27,7 @@ def instructions():
     /delete                      #
     /jobs                        #
 """
+
 #Route to load the data into the redis database. Can be used to reset data as well
 @app.route('/load', methods['GET'])
 def loaddata():

@@ -1,27 +1,23 @@
-version: "3.5"
-
-networks:
-    final_project:
-        driver: bridge
-
+---
+version: '3'
 services:
     redis:
-        image: redis
-        networks:
-            - final
+        image: rylagan091888/final:latest
+        container_name: rylagan-db
+        ports:
+            - 6420:6379
+        user: "827385:815499"
+        volumes:
+            - ../data/:/data/
     flask:
         image: rylagan091888/final:latest
-        command: "api.py"
-        ports:
-            - "5000:5000"
+        container_name: rylagan-api
         environment:
-            REDIS_IP: "redis"
-        networks:
-            - final
+            - REDIS_IP=rylagan-db
+        ports:
+            - 5040:5000
     worker:
         image: rylagan091888/final:latest
-        command: "worker.py"
+        container_name: final-worker
         environment:
-            REDIS_IP: "redis"
-        networks:
-            - final
+            - REDIS_IP=rylagan-db

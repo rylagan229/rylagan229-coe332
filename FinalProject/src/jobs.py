@@ -4,6 +4,7 @@ from hotqueue import HotQueue
 from redis import StrictRedis
 import os
 import sys
+import matplotlib.pyplot as plt
 
 q = HotQueue("queue", host='10.105.227.117', port=6379, db=1)
 rd = StrictRedis(host='10.105.227.117', port=6379, db=0)
