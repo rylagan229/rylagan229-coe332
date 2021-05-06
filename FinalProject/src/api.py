@@ -23,16 +23,21 @@ rd = redis.StrictRedis(host = redis_ip, port=6379, db = 0)
 def instructions():
     return """
     Try these routes:
+    /                            # Instructions for different Routes
     /load                        # Populates the redis database with the .json file provided. Can also be used to reset the database if empty or edited
-    /Get_All                     # Returns every intake in the database. There are 3000 entries in the dataset by default
-    /Get_Animal/?Animal_ID=...   # Allows the user query an animal id to get the information of the animal
-    /Animal_Type/<type>          # Allows the user to sort by the type of Animal. Avaliable types are Dog, Cat, and Other 
-    /Update_Animal/?Animal_ID=...# Allows the user to update an animal given the animal's given id
-    /Add_Animal                  # Allows the user to add an animal by using the json format
-    /Delete/?Animal_ID=...       # Allows the user to delete an animal with a query for their id
-    /jobs                        # Gets a list of Jobs
+    /Get_All                     # (GET) Returns every intake in the database. There are 3000 entries in the dataset by default
+    /Get_Animal/?Animal_ID=...   # (GET) Allows the user query an animal id to get the information of the animal
+    /Animal_Type/<type>          # (GET) Allows the user to sort by the type of Animal. Avaliable types are Dog, Cat, Bird, and Other 
+    /Update_Animal/?Animal_ID=...# (GET) Allows the user to update an animal given the animal's given id
+    /Add_Animal                  # (POST) Allows the user to add an animal by using the json format
+    /Delete/?Animal_ID=...       # (GET) Allows the user to delete an animal with a query for their id
+    /jobs                        # (GET) Gets a list of Jobs
 
 """
+#@app.route('/run', methods=['GET'])
+#def run_jobs():
+#
+#    return
 
 #Route to load the data into the redis database. Can be used to reset data as well
 @app.route('/load', methods=['GET'])
@@ -49,6 +54,7 @@ def GetAll():
     return json.dumps(get_data(), indent=2)
 
 # Route to fulfill the C of CRUD
+# Adds an animal using a json format
 @app.route('/Add_Animal', methods = ['GET','POST'])
 def Add():
     try:
@@ -58,9 +64,9 @@ def Add():
     
     test = get_data()
     test['intakes'].append(add)
-    rd.set('intakes', json.dumps(test))
+    rd.set('intakes_key', json.dumps(test))
 
-    return json.dumps(test, indent=2)
+    return json.dumps(get_data, indent=2)
 
 # Route to fulfill the R of CRUD
 @app.route('/Get_Animal/', methods=['GET'])
@@ -78,6 +84,7 @@ def Get_Animal():
 @app.route('/Update_Animal/', methods=['GET'])
 def Update():
     test = get_data()
+
     animal_id = request.args.get('Animal_ID')
     name = request.args.get('name')
     intaketype = request.args.get('intaketype')
@@ -112,6 +119,7 @@ def delete():
 
     return 'Animal with ID {} deleted.'.format(animal_id)
 
+# Filter by animal type/ extra route (Dog, Cat, Bird, Other)
 @app.route('/Animal_Type/<Animal_Type>', methods=['GET'])
 def SortByType(Animal_Type):
     test = get_data()
@@ -121,18 +129,32 @@ def SortByType(Animal_Type):
 
     return json.dumps(output, indent=2)
 
+@app.route('/run', methods=['POST'])
+def run_job():
+    this_uuid = str(uuid4()) 
+    this_sequence = str(request.form['seq'])
+    data = { 'datetime': str(datetime.now()),
+             'status': 'submitted',
+             'input': this_sequence }
+    rd.hmset(this_uuid, data)
+    
+    q.put(this_uuid)
+    
+    return f'Job {this_uuid} submitted to the queue\n'
+
+# Allows the user to submit a Job request
 @app.route('/jobs', methods=['POST'])
 def jobs_api():
     try:
         job = request.get_json(force=True)
     except Exception as e:
         return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
-    return json.dumps(jobs.add_job(job['start'], job['end']))
+    return json.dumps(jobs.add_job(job['start'], job['end'], job['animal_type']))
 
 # Allows user to see job based on Job ID
 @app.route('/jobs/<jobuuid>', methods=['GET'])
 def get_job_output(jobuuid):
-    bytes_dict = rd.hgetall(jobuuid)
+    byte_dict = rd.hgetall(jobuuid)
     final_dict = {}
     for key, value in bytes_dict.items():
         if key.decode('utf-8') == 'result':
