@@ -1,8 +1,8 @@
 NSPACE="rylagan091888"
 APP="final"
-VER="0.3.0"
-RPORT="6441"
-FPORT="5041"
+VER="latest"
+RPORT="6420"
+FPORT="5040"
 UID="827385"
 GID="815499"
 

@@ -2,7 +2,7 @@
 version: '3'
 services:
     redis:
-        image: rylagan091888/final:latest
+        image: rylagan091888/final-db:latest
         container_name: rylagan-db
         ports:
             - 6420:6379
@@ -10,14 +10,14 @@ services:
         volumes:
             - ../data/:/data/
     flask:
-        image: rylagan091888/final:latest
+        image: rylagan091888/final-api:latest
         container_name: rylagan-api
         environment:
             - REDIS_IP=rylagan-db
         ports:
             - 5040:5000
     worker:
-        image: rylagan091888/final:latest
-        container_name: final-worker
+        image: rylagan091888/final-wrk:latest
+        container_name: rylagan-wrk
         environment:
             - REDIS_IP=rylagan-db

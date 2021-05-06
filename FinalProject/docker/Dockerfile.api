@@ -6,11 +6,11 @@ RUN pip3 install Flask==1.1.2 \
                  hotqueue==0.2.8 \
                  pytest==6.2.3 \
                  redis==3.5.3 \
-                 requests==2.25.1
+                 requests==2.25.1 \
 
 COPY ./src/api.py /app/
 COPY ./src/jobs.py /app/
-COPY ./src/US_City_Pop_Above_50000.json /app/
+COPY ./src/Latest_Animal_Intakes.json /app/
 
 WORKDIR /app
 
