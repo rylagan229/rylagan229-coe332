@@ -33,27 +33,12 @@ def instructions():
 """
 
 #Route to load the data into the redis database. Can be used to reset data as well
-@app.route('/load', methods['GET'])
+@app.route('/load', methods=['GET'])
 def loaddata():
     with open("Latest_Animal_Intakes.json","r") as f:
         intakes = json.load(f)
-    count = 0
-    for animal in intakes:
-        Animal_Id = intakes['Animal_Id']
-        Name = intakes['Name']
-        DateTime = intakes['DateTime']
-        MonthYear = intakes['MonthYear']
-        Location_Found = intakes['Found Location']
-        Intake_Type = intakes['Intake Type']
-        Intake_Condition = intakes['Intake_Condition']
-        Animal_Type = intakes['Animal Type']
-        Sex_upon_Intake = intakes['Sex upon Intake']
-        Age_upon_Intake = intakes['Age upon Intake']
-        Breed = intakes['Breed']
-        Color = intakes['Color']
-        
-        count = count + 1
-        rd.set('intakes', json.dumps(intakes, indent=2))
+
+    rd.set('intakes', json.dumps(intakes, indent=2))
         
     return json.loads(rd.get('intakes'))
 
