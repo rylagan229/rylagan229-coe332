@@ -17,15 +17,17 @@ def _generate_jid():
 def _generate_job_key(jid):
     return 'job.{}'.format(jid)
 
-def _instantiate_job(jid, status, start, end):
+def _instantiate_job(jid, status, jobtype, start, end):
     if type(jid) == str:
         return {'id': jid,
                 'status': status,
+                'jobtype':jobtype,
                 'start': start,
                 'end': end
         }
     return {'id': jid.decode('utf-8'),
             'status': status.decode('utf-8'),
+            'jobtype': jobtype.decode('utf-8'),
             'start': start.decode('utf-8'),
             'end': end.decode('utf-8')
     }

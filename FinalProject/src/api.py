@@ -16,19 +16,19 @@ import datetime
 
 app = Flask(__name__)
 
-redis_ip = 'rylagan-db'
+redis_ip = '10.105.227.117'
 rd = redis.StrictRedis(host = redis_ip, port=6379, db = 0)
 
 @app.route('/', methods=['GET'])
 def instructions():
     return """
     Try these routes:
-    /load                        # Populates the redis database with the .json file provided. Can also be used to reset the database
+    /load                        # Populates the redis database with the .json file provided. Can also be used to reset the database if empty or edited
     /Get_All                     # Returns every intake in the database. There are 3000 entries in the dataset by default
     /Get_Animal/?Animal_ID=...   # Allows the user query an animal id to get the information of the animal
     /Animal_Type/<type>          # Allows the user to sort by the type of Animal. Avaliable types are Dog, Cat, and Other 
     /Update_Animal/?Animal_ID=...# Allows the user to update an animal given the animal's given id
-    /Add_Animal                  # Allows the to add an animal
+    /Add_Animal                  # Allows the user to add an animal by using the json format
     /Delete/?Animal_ID=...       # Allows the user to delete an animal with a query for their id
     /jobs                        # Gets a list of Jobs
 
@@ -128,6 +128,29 @@ def jobs_api():
     except Exception as e:
         return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
     return json.dumps(jobs.add_job(job['start'], job['end']))
+
+# Allows user to see job based on Job ID
+@app.route('/jobs/<jobuuid>', methods=['GET'])
+def get_job_output(jobuuid):
+    bytes_dict = rd.hgetall(jobuuid)
+    final_dict = {}
+    for key, value in bytes_dict.items():
+        if key.decode('utf-8') == 'result':
+            final_dict[key.decode('utf-8')] = json.loads(value.decode('utf-8'))
+        elif key.decode('utf-8') == 'image':
+            final_dict[key.decode('utf-8')] = 'ready'
+        else:
+            final_dict[key.decode('utf-8')] = value.decode('utf-8')
+    return json.dumps(final_dict, indent=4)
+
+
+# Download image based on ID
+@app.route('/download/<jobuuid>', methods=['GET'])
+def download(jobuuid):
+    path = f'/app/{jobuuid}.png'
+    with open(path, 'wb') as f:
+        f.write(rd.hget(jobuuid, 'image'))
+    return send_file(path, mimetype='image/png', as_attachment=True)
 
 def get_data():
     return json.loads(rd.get('intakes_key').decode('utf-8'))
