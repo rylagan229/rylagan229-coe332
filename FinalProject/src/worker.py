@@ -13,15 +13,14 @@ rd = redis.StrictRedis(host=redis_ip, port=6379, db=0)
 
 @q.worker
 def execute_job(jid):
-    jobid, status, start, end = rd_job.hmget(generate_job_key(jid), 'id', 'status', 'start', 'end', 'animal_type')
     data = json.loads(rd.get('data'))
-    x_values_to_plot = []
-    y_values_to_plot = []
+    dates = []
+    intakecount = []
 
     # Fill values to plot...
     # Want x values to be Time, and y values to be the number of intakes on the date
-    start = job['start']
-    end = job['end']
+    start = rd_job.hget(job_id,'start').decode('utf-8'))
+    end = rd_job.hget(job_id, 'end').decode('utf-8'))
     
     # Use datetime to pull the request startdate and enddate
     startdate = datetime.datetime.strptime(start,'%m-$d-%Y')
@@ -29,14 +28,17 @@ def execute_job(jid):
     enddate = datetime.datetime.strptime(end, '%m-%d-$Y')
     
     # initialize the base animal count per day at 0
-    animalcount = 0
-    for key in rd.keys():
-        datetimekey = str(rd.get(key, 'DateTime'))
-        if (start <= datetimekey
-            x_values_to_plot.append(key)
-            y_values_to_plot.append(key)
+    dailyintakecount = 0
+    jsonList = data['intakes']
+    for i in data:
+        datetime = i['DateTime']
+        if (start <= DateTime and end >= end)
+            dates.append(DateTime)
+            dailyintakecount = dailyintakecount + 1
+            
+        intakecount.append(dailyintakecount)
 
-    plt.scatter(x_values_to_plot, y_values_to_plot)
+    plt.scatter(dates, intakecount)
     plt.xlabel('Time')
     plt.ylabel('Number of Intakes')
     plt.savefig('/output_image.png')
