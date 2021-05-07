@@ -1,9 +1,10 @@
 from jobs import q, update_job_status
 import matplotlib.pyplot as plt
 import time
+import datetime
 import redis
 
-redis_ip = '10.105.227.117'
+redis_ip = '10.105.120.63'
 rd_job = redis.StrictRedis(host=redis_ip, port=6379, db=0)
 rd = redis.StrictRedis(host=redis_ip, port=6379, db=0)
 
@@ -12,22 +13,28 @@ rd = redis.StrictRedis(host=redis_ip, port=6379, db=0)
 
 @q.worker
 def execute_job(jid):
-    jobid, status, start, end = rd_job.hmget(generate_job_key(jid), 'id', 'status', 'start', 'end')
-    update_job_status(jid, 'in progress')
-    time.sleep(15)
-    update_job_status(jid, 'complete')
+    jobid, status, start, end = rd_job.hmget(generate_job_key(jid), 'id', 'status', 'start', 'end', 'animal_type')
     x_values_to_plot = []
     y_values_to_plot = []
 
     # Fill values to plot...
+    # Want x values to be Time, and y values to be the number of intakes on the date
+    start = job['start']
+    end = job['end']
+    
+    # Use datetime to pull the request startdate and enddate
+    startdate = datetime.datetime.strptime(start,'%m-$d-%Y')
 
-    for key in raw_data.keys():       # raw_data.keys() is a client to the raw data stored in redis
-        if (int(start) <= key['date'] <= int(end)):
-            x_values_to_plot.append(key['interesting_property_1'])
-            y_values_to_plot.append(key['interesting_property_2'])
+    enddate = datetime.datetime.strptime(end, '%m-%d-$Y')
+
+    for key in rd.keys():
+        datetimekey = str(rd.get(key, 'DateTime')
+        if (int(start) <= key['DateTime'] <= int(end)):
+            x_values_to_plot.append(key)
+            y_values_to_plot.append(key)
 
     plt.scatter(x_values_to_plot, y_values_to_plot)
-    plt.xlabel('Dates')
+    plt.xlabel('Time')
     plt.ylabel('Number of Intakes')
     plt.savefig('/output_image.png')
 

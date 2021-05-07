@@ -22,6 +22,7 @@ spec:
         - name: rylagan-final-flask
           image: rylagan091888/final-api:latest
           imagePullPolicy: Always
+          #command: ['sleep', '999999999']
           command: ["python", "api.py"]
 
           env:

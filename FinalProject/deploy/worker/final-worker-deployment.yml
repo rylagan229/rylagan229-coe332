@@ -20,12 +20,9 @@ spec:
     spec:
       containers:
         - name: rylagan-final-worker
+          imagePullPolicy: Always
           image: rylagan091888/final-wrk:latest
-          command: ["python", "worker.py"]
+          #command: ['sleep', '999999999']
           env:
             - name: WORKER_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-            - name: REDIS_IP
-              value: 10.105.227.117
+              value: "worker.py"
