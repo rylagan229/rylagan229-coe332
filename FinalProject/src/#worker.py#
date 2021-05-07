@@ -32,7 +32,9 @@ def execute_job(jid):
     animalcount = 0
     for key in rd.keys():
         datetimekey = str(rd.get(key, 'DateTime'))
-        if (start <= datetimekey
+        # if between the two entered start and end
+        if (start <= datetimekey and end >= datetimekey):
+            if x 
             x_values_to_plot.append(key)
             y_values_to_plot.append(key)
 

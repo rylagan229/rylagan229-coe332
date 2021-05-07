@@ -32,7 +32,8 @@ def instructions():
     /Add_Animal                  # (POST) Allows the user to add an animal by using the json format
     /Delete/?Animal_ID=...       # (GET) Allows the user to delete an animal with a query for their id
     /jobs                        # (GET) Gets a list of Jobs
-
+    /download/<jobuuid>
+    
 """
 #@app.route('/run', methods=['GET'])
 #def run_jobs():
@@ -128,19 +129,6 @@ def SortByType(Animal_Type):
     output = [x for x in jsonList if x['Animal Type'] == Animal_Type]
 
     return json.dumps(output, indent=2)
-
-@app.route('/run', methods=['POST'])
-def run_job():
-    this_uuid = str(uuid4()) 
-    this_sequence = str(request.form['seq'])
-    data = { 'datetime': str(datetime.now()),
-             'status': 'submitted',
-             'input': this_sequence }
-    rd.hmset(this_uuid, data)
-    
-    q.put(this_uuid)
-    
-    return f'Job {this_uuid} submitted to the queue\n'
 
 # Allows the user to submit a Job request for the worker that uses the DateTime to graph the number of animals during that time
 @app.route('/jobs', methods=['POST'])
