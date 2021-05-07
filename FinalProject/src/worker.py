@@ -1,4 +1,4 @@
-from jobs import q, update_job_status
+Bfrom jobs import q, update_job_status
 import matplotlib.pyplot as plt
 import time
 import datetime
@@ -32,7 +32,7 @@ def execute_job(jid):
     jsonList = data['intakes']
     for i in data:
         datetime = i['DateTime']
-        if (start <= DateTime and end >= end)
+        if (start <= datetime and datetime >= end)
             dates.append(DateTime)
             dailyintakecount = dailyintakecount + 1
             
