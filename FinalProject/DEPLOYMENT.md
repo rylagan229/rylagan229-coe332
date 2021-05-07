@@ -25,7 +25,7 @@ rylagan-final-flask-deployment-65dd6457dd-r5s4q    1/1     Running            0 
 rylagan-final-redis-deployment-5fcf46b69-nxx2q     1/1     Running            0          41m
 rylagan-final-worker-deployment-77d7984796-6gft9   1/1     Running            0          13m
 ```
-And
+and
 ```bash
 $ kubectl get services
 NAME                          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
@@ -33,7 +33,7 @@ app1                          NodePort    10.98.88.66     <none>        5000:301
 rylagan-final-flask-service   ClusterIP   10.99.29.160    <none>        5000/TCP         56m
 rylagan-final-redis-service   ClusterIP   10.105.120.63   <none>        6379/TCP         56m
 ```
-and
+Take note of the redis and flask IPs, as they will be used to access the database and curl
 ```bash
 $ kubectl get pvc
 NAME                 STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
