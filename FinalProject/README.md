@@ -107,9 +107,12 @@ $ curl 10.99.29.160:5000/Update_Animal/?Animal_ID=A806287&name=Ryan&intaketype=S
          "Color":"Black"
  },
 ```
+#### /Animal_Type/<Animal_Type>
+* Returns all animals with the input type. Available types are Dog, Cat, Bird, and Other.
 
 #### /Delete
-* Allows the user to delete an Animal given their Animal ID```
+* Allows the user to delete an Animal given their Animal ID
+```
 $ curl 10.99.29.160:5000/Get_Animal/?Animal_ID=A806287
 Animal with ID A806287 deleted.
 ```
